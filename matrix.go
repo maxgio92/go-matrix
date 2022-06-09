@@ -10,17 +10,16 @@ type part struct {
 
 var (
 	parts = []*part{
-		&part{combinazioni: []combinazione{"A", "B"}, pointer: 0},      // part
-		&part{combinazioni: []combinazione{"1", "2", "3"}, pointer: 0}, // part
-		&part{combinazioni: []combinazione{"x", "y", "z"}, pointer: 0}, // part
+		&part{combinazioni: []combinazione{"A", "B"}, pointer: 0},           // part
+		&part{combinazioni: []combinazione{"1", "2", "3", "4"}, pointer: 0}, // part
+		&part{combinazioni: []combinazione{"w", "x", "y", "z"}, pointer: 0}, // part
 	}
 )
 
 // (i)	(j)
 // A	1	Z
 // B	2	Y
-// C		X
-//			W
+// 		3	X
 
 // n 			= the column index
 // part.pointer	= the row index
@@ -29,12 +28,19 @@ func main() {
 	combinazione_cumulata := ""
 	y := 0
 
-	for n, _ := range parts {
-		// TODO: it should start from scratch
+	//for n, _ := range parts {
+	//	// TODO: it should start from scratch
+	//	combinazione_cumulata = ""
+	//	n = n
+
+	for {
 		combinazione_cumulata = ""
-		n = n
 
 		gotoNextPart(&combinazioni, &combinazione_cumulata, 0, parts[0], parts, y)
+
+		if parts[0].pointer+1 == len(parts[0].combinazioni) {
+			break
+		}
 	}
 }
 
@@ -63,6 +69,13 @@ func gotoNextPart(combinazioni *[]*string, combinazione_cumulata *string, n int,
 		n--
 		part = parts[n]
 
-		part.pointer++
+		if part.pointer+1 < len(part.combinazioni) {
+			part.pointer++
+		} else {
+			if parts[n-1].pointer+1 < len(parts[n-1].combinazioni) {
+				part.pointer = 0
+				parts[n-1].pointer++
+			}
+		}
 	}
 }
