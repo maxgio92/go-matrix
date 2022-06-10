@@ -22,11 +22,12 @@ func main() {
 	fmt.Println(combinazioni)
 }
 
-// y	(i)	(j)
+// (ordinata)
+// y
 // ^	A	1	Z
 // |	B	2	Y
 // |		3	X
-// ------> x
+// ------> x (ascissa)
 
 // n 			= the column index
 // part.ordinata	= the row index
@@ -34,16 +35,12 @@ func getCombinazioni() []string {
 	combinazioni := []string{}
 	combinazione_cumulata := ""
 
-	//// Print
-	//for _, v := range parts {
-	//	fmt.Println(v)
-	//}
-
 	// For each time the last part has been reached
 	// exit from recursion until reaching this:
 	for {
 		combinazione_cumulata = ""
 
+		// Start always from the first part (x=0)
 		gotoNextPart(&combinazioni, &combinazione_cumulata, 0, &parts[0], parts)
 
 		if parts[0].ordinata == len(parts[0].combinazioni) {
@@ -54,32 +51,29 @@ func getCombinazioni() []string {
 	return combinazioni
 }
 
-func gotoNextPart(combinazioni *[]string, combinazione_cumulata *string, n int, part *part, parts []part) {
+func gotoNextPart(combinazioni *[]string, combinazione_cumulata *string, ascissa int, part *part, parts []part) {
 
-	if n+1 < len(parts) { // Move forward until the last part is reached.
+	if ascissa+1 < len(parts) { // Move forward until the last part is reached.
 
 		*combinazione_cumulata += string(part.combinazioni[part.ordinata])
 
-		n++
-		part = &parts[n]
-		gotoNextPart(combinazioni, combinazione_cumulata, n, part, parts)
+		ascissa++
+		part = &parts[ascissa]
+		gotoNextPart(combinazioni, combinazione_cumulata, ascissa, part, parts)
 	} else { // Move backward: the last part has been reached.
 
 		for _, combinazione := range part.combinazioni {
-			//fmt.Println(*combinazione_cumulata + string(combinazione))
-
-			tmp := string(*combinazione_cumulata + string(combinazione))
-			*combinazioni = append(*combinazioni, tmp)
+			*combinazioni = append(*combinazioni, string(*combinazione_cumulata+string(combinazione)))
 		}
 
-		n--
-		part = &parts[n]
+		ascissa--
+		part = &parts[ascissa]
 
 		if part.ordinata+1 < len(part.combinazioni) {
 			part.ordinata++
 		} else {
 			part.ordinata = 0
-			parts[n-1].ordinata++
+			parts[ascissa-1].ordinata++
 		}
 	}
 }
